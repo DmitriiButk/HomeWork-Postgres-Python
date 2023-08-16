@@ -131,33 +131,54 @@ def delete_client(conn, client_id):
 
 def find_client(conn, name=None, surname=None, email=None, number= None):
     """Находит клиента и выводит информацию о нём."""
-    if name is not None:
+    if name is not None and surname is not None and email is not None and number is not None:
         with conn.cursor() as cur:
             cur.execute("""
             SELECT C.name, C.surname, C.email, P.number FROM Client AS C
-            LEFT JOIN Phone AS P ON C.id = P.id WHERE C.name=%s;
-            """, (name,))
+            LEFT JOIN Phone AS P ON C.id = P.id WHERE C.name=%s AND C.surname=%s AND C.email=%s AND P.number=%s;
+            """, (name, surname, email, number,))
             return print(cur.fetchall())
-    if surname is not None:
+    if name is not None and surname is not None and email is not None:
         with conn.cursor() as cur:
             cur.execute("""
-            SELECT C.name, C.surname, C.email, P.number FROM Client AS C
-            LEFT JOIN Phone AS P ON C.id = P.id WHERE C.surname=%s;
-            """, (surname,))
+            SELECT C.name, C.surname, C.email FROM Client AS C
+            LEFT JOIN Phone AS P ON C.id = P.id WHERE C.name=%s AND C.surname=%s AND C.email=%s;
+            """, (name, surname, email,))
             return print(cur.fetchall())
-    if email is not None:
+    if name is not None and surname is not None:
         with conn.cursor() as cur:
             cur.execute("""
-            SELECT C.name, C.surname, C.email, P.number FROM Client AS C
-            LEFT JOIN Phone AS P ON C.id = P.id WHERE C.email=%s;
-            """, (email,))
+            SELECT C.name, C.surname FROM Client AS C
+            LEFT JOIN Phone AS P ON C.id = P.id WHERE C.name=%s AND C.surname=%s;
+            """, (name, surname,))
             return print(cur.fetchall())
-    if number is not None:
+    if name is not None and email is not None:
         with conn.cursor() as cur:
             cur.execute("""
-            SELECT C.name, C.surname, C.email, P.number FROM Client AS C
-            LEFT JOIN Phone AS P ON C.id = P.id WHERE P.number=%s;
-            """, (number,))
+            SELECT C.name, C.email FROM Client AS C
+            LEFT JOIN Phone AS P ON C.id = P.id WHERE C.name=%s AND C.email=%s;
+            """, (name, email,))
+            return print(cur.fetchall())
+    if name is not None and number is not None:
+        with conn.cursor() as cur:
+            cur.execute("""
+            SELECT C.name, P.number FROM Client AS C
+            LEFT JOIN Phone AS P ON C.id = P.id WHERE C.name=%s AND P.number=%s;
+            """, (name, number,))
+            return print(cur.fetchall())
+    if surname is not None and email is not None:
+        with conn.cursor() as cur:
+            cur.execute("""
+            SELECT C.surname, C.email FROM Client AS C
+            LEFT JOIN Phone AS P ON C.id = P.id WHERE  C.surname=%s AND C.email=%s;
+            """, (surname, email,))
+            return print(cur.fetchall())
+    if surname is not None and number is not None:
+        with conn.cursor() as cur:
+            cur.execute("""
+            SELECT C.surname, P.number FROM Client AS C
+            LEFT JOIN Phone AS P ON C.id = P.id WHERE  C.surname=%s AND P.number=%s;
+            """, (surname, number,))
             return print(cur.fetchall())
 
 
